@@ -1,23 +1,45 @@
 import pygame
+
 pygame.init()
-Width, Height = 500,500
-x,y = 50,50
-screen = pygame.display.set_mode((Width, Height))
-clock = pygame.time.Clock()
-while True:
-    screen.fill((255, 255, 255))
-    for i in pygame.event.get():
-        if i.type == pygame.QUIT:
-            False
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_RIGHT] and x <= 455:
-        x += 20
-    if pressed[pygame.K_LEFT] and x >= 45:
-        x -= 20
-    if pressed[pygame.K_UP] and y >= 45:
-        y -= 20
-    if pressed[pygame.K_DOWN] and y <= 455:
-        y += 20
-    pygame.draw.circle(screen, (255, 0, 0), (x, y), 25)
-    clock.tick(60)
-    pygame.display.flip()
+
+win_width = 800
+win_height = 400
+win = pygame.display.set_mode((win_width, win_height))
+pygame.display.set_caption("Moving Ball")
+
+ball_radius = 25
+ball_pos = [win_width // 2, win_height // 2]
+
+white = (255, 255, 255)
+red = (255, 0, 0)
+
+def draw_ball():
+    pygame.draw.circle(win, red, ball_pos, ball_radius)
+
+ok = True
+while ok:
+
+    win.fill(white)
+
+    draw_ball()
+
+    pygame.display.update()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            ok = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                if ball_pos[1] - 20 >= ball_radius:
+                    ball_pos[1] -= 20
+            elif event.key == pygame.K_DOWN:
+                if ball_pos[1] + 20 <= win_height - ball_radius:
+                    ball_pos[1] += 20
+            elif event.key == pygame.K_LEFT:
+                if ball_pos[0] - 20 >= ball_radius:
+                    ball_pos[0] -= 20
+            elif event.key == pygame.K_RIGHT:
+                if ball_pos[0] + 20 <= win_width - ball_radius:
+                    ball_pos[0] += 20
+
+# pygame.quit()
