@@ -1,51 +1,38 @@
 import pygame
 import datetime
 
+def rot_center(image, angle, x, y):
+    
+    rotated_image = pygame.transform.rotate(image, angle)
+    new_rect = rotated_image.get_rect(center = image.get_rect(center = (x, y)).center)
+
+    return rotated_image, new_rect
+
+
 pygame.init()
 
-screen = pygame.display.set_mode((400, 400))
-pygame.display.set_caption("Mickey Mouse Clock")
 
-clock_image = pygame.image.load("mickeyclock.jpeg")
+clock_main = pygame.display.set_mode((900, 700))
+h = pygame.image.load("data/clock_main.png")
+h = pygame.transform.scale(h, clock_main.get_size())
+clock_main.blit(h, (0, 0))
+clock_second = pygame.image.load("data/clock_second-removebg-preview (1).png")
+cl = clock_main.get_rect().center
 
-clock_center = (200, 200)
-
-minute_hand_length = 80
-second_hand_length = 100
-
-minute_hand_color = (255, 255, 255)
-second_hand_color = (255, 0, 0)
-
-def draw_hand(angle, length, color):
-    rotated_hand = pygame.transform.rotate(clock_image, angle)
-    hand_rect = rotated_hand.get_rect()
-    hand_rect.center = clock_center
-    hand_end = (clock_center[0] + length * pygame.math.Vector2(angle).x, clock_center[1] - length * pygame.math.Vector2(angle).y)
-    pygame.draw.line(screen, color, clock_center, hand_end, 5)
-    screen.blit(rotated_hand, hand_rect)
-
-minute_hand_image = pygame.image.load("mickeyclock_minute_hand.png")
-second_hand_image = pygame.image.load("mickeyclock_second_hand.png")
-
-running = True
-clock = pygame.time.Clock()
-while running:
+clock_minute = pygame.image.load("data/roma_clock-removebg-preview.png")
+ok=True
+while ok:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    current_time = datetime.datetime.now().time()
-
-    minute_angle = (current_time.minute / 60) * 360
-    second_angle = (current_time.second / 60) * 360
-
-    screen.blit(clock_image, (0, 0))
-
-    draw_hand(minute_angle, minute_hand_length, minute_hand_color)
-    draw_hand(second_angle, second_hand_length, second_hand_color)
-
-    pygame.display.flip()
-
-    clock.tick(60)
-
-pygame.quit()
+        if event == pygame.QUIT:
+            pygame.quit()
+            ok=False
+            exit()
+    clock_main.blit(h, (0, 0))
+    time_now = datetime.datetime.now()
+    seconds_time = time_now.second
+    minutes_time = time_now.minute
+    some_second, pos_second = rot_center(clock_second, 135 - seconds_time * 6, *cl)
+    some_minute, pos_minute = rot_center(clock_minute, 135 - minutes_time * 6, *cl)
+    clock_main.blit(some_second, pos_second)
+    clock_main.blit(some_minute, pos_minute)
+    pygame.display.update()
